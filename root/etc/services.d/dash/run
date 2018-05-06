@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+cd /app/app/server
+
+export LINUX_DASH_SERVER_PORT=7171
+
+exec \
+	s6-setuidgid abc node index.js
