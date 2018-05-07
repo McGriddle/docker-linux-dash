@@ -41,9 +41,19 @@ If you want to use this with a reverse proxy subfolder, set the BASEURL to that 
 ```
 docker run -d --name linuxdash \
  --cap-add=NET_ADMIN \
- -p 7171:7171 \
  -e BASEURL="dash" \
  mcgriddle/linux-dash:latest
+```
+
+Supporting nginx location
+```
+location /dash/ {
+        proxy_pass  http://<name_of_linked_container>:7171/;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header X-Forwarded-For $remote_addr;
+    }
 ```
 
 **Note:** The leading forward slash is purposely removed.
