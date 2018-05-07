@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bash
+
+
+BASEURL=${BASEURL:-""}
+
+
+if [ -n "$BASEURL" ]; then
+	# server listening urls
+	sed -i "s|app.get('/|app.get('/$BASEURL/|g" /app/app/server/index.js
+
+	# client websocket url
+	sed -i "s|new WebSocket(websocketUrl);|new WebSocket(websocketUrl + '/$BASEURL/');|g" /app/app/linuxDash.min.js
+
+	# test to see if browser supports websocket
+	sed -i "s|get(\"/websocket\")|get(\"/$BASEURL/websocket\")|g" /app/app/linuxDash.min.js
+
+	# module/plugin calls
+	sed -i "s|'server/?module='|'$BASEURL/server/?module='|g" /app/app/linuxDash.min.js
+
+	cd /app/app && mkdir "$BASEURL" && cd "$BASEURL" && ln -sT ../index.html index.html && ln -sT ../linuxDash.min.css linuxDash.min.css && ln -sT ../linuxDash.min.js linuxDash.min.js
+fi
